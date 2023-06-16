@@ -6,7 +6,7 @@ jobs:
     steps:
       - name: get tags
         run: |
-          my_array=(curl 'https://registry.hub.docker.com/v2/repositories/library/centos/tags/list'| jq '."results"[]["name"]')
+          my_array=(curl 'https://registry.hub.docker.com/v2/repositories/library/centos/tags/list'|jq '."results"[]["name"]')
           
           echo my_array[0]
           echo my_array[1]
