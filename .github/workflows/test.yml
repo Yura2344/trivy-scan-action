@@ -6,7 +6,6 @@ jobs:
     steps:
       - name: get tags
         run: |
-          tags_array=($(curl -L -s 'https://registry.hub.docker.com/v2/repositories/library/centos/tags'|jq '."results"[]["name"]'))
-          echo ${tags_array[0]}
-          echo ${tags_array[1]}
+          tags_array=($(curl -L -s 'https://registry.hub.docker.com/v2/repositories/library/percona/tags'|jq '."results"[]["name"]'))
+          echo ${tags_array[*]}
           sort -V <<<${tags_array[*]}
