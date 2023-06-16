@@ -1,0 +1,8 @@
+name: test
+on: [workflow_dispatch]
+jobs:
+  get_tags:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get tags
+        run: curl 'https://registry.hub.docker.com/v2/repositories/library/debian/tags/'|jq '."results"[]["name"]'
