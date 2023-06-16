@@ -4,6 +4,8 @@ jobs:
   get_tags:
     runs-on: ubuntu-latest
     steps:
+      - name: check jq
+        run: which jq
       - name: get tags
         run: |
           my_array=(curl 'https://registry.hub.docker.com/v2/repositories/library/centos/tags/list'|jq '."results"[]["name"]')
