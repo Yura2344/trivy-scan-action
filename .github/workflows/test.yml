@@ -6,15 +6,7 @@ jobs:
     steps:
       - name: get tags
         run: |
-          my_array=()
-          i=0
-
-          while [ $? == 0 ]
-          do 
-             i=$((i+1))
-             my_array+=curl https://registry.hub.docker.com/v2/repositories/library/debian/tags/?page=$i 2>/dev/null|jq '."results"[]["name"]'
-
-          done
+          my_array=(curl https://registry.hub.docker.com/v2/repositories/library/centos/tags/list | jq '."results"[]["name"]')
           
           echo my_array[0]
           echo my_array[1]
