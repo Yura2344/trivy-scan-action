@@ -5,4 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: get tags
-        run: curl 'https://registry.hub.docker.com/v2/repositories/library/debian/tags/'|jq '."results"[]["name"]'
+        run: |
+          my_array=()
+          i=0
+
+          while [ $? == 0 ]
+          do 
+             i=$((i+1))
+             curl https://registry.hub.docker.com/v2/repositories/library/debian/tags/?page=$i 2>/dev/null|jq '."results"[]["name"]'
+
+          done
+          
+          echo my_array[0]
+          echo my_array[1]
