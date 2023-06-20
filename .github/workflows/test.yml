@@ -3,9 +3,6 @@ on: [workflow_dispatch]
 jobs:
   get_tags:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        repos: ${{ steps.get-tags.outputs.matrix }}
     steps:
       - name: Get tags
         id: get-tags
