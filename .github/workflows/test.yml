@@ -29,7 +29,7 @@ jobs:
               done
               tags_array=($(printf "%s\n" "${tags_array[@]}" | sort -V | tail -n 5))
               for tag in ${tags_array[@]}; do
-                  repo_with_tags+=("percona/$repo:$tag")
+                  repo_with_tags+=("$repo:$tag")
               done
           done
           jsonString=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${repo_with_tags[@]}")
@@ -46,7 +46,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: '${{ matrix.repos }}'
+          image-ref: 'percona/${{ matrix.repos }}'
           format: 'sarif'
           output: '${{ matrix.repos }}-scan-result.sarif'
       - name: Upload Trivy scan results to GitHub Security tab
