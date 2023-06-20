@@ -48,8 +48,8 @@ jobs:
         with:
           image-ref: 'percona/${{ matrix.repos }}'
           format: 'sarif'
-          output: '${{ matrix.repos }}-scan-result.sarif'
+          output: 'scan-result.sarif'
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: '${{ matrix.repos }}-scan-result.sarif'
+          sarif_file: 'scan-result.sarif'
