@@ -35,6 +35,7 @@ jobs:
           jsonString=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${repo_with_tags[@]}")
           echo "::set-output name=repos::$jsonString"
   scan-repos:
+    permissions: write-all
     runs-on: ubuntu-latest
     needs: get-tags
     strategy:
