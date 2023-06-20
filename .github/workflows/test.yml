@@ -42,15 +42,18 @@ jobs:
       matrix:
         repos: ${{ fromJSON(needs.get-tags.outputs.repos) }}
     steps:
-      - name: Print repos
-        run: echo ${{ fromJSON(needs.get-tags.outputs.repos) }}
+      - name: Install Trivy
+        run: |
+          wget https://github.com/aquasecurity/trivy/releases/download/v0.29.2/trivy_0.29.2_Linux-64bit.deb
+          sudo dpkg -i trivy_0.29.2_Linux-64bit.deb
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
+        run: trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o report.html ${{ matrix.repos }}
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v3
         with:
-          image-ref: 'percona/${{ matrix.repos }}'
-          format: 'sarif'
-          output: 'scan-result.sarif'
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: 'scan-result.sarif'
+          name: trivy-scan-report
+          path: ./report.html
+      
+      
+      
+      
