@@ -1,11 +1,14 @@
 name: test
 on: [workflow_dispatch]
 jobs:
-  get_tags:
+  get-tags:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repos: ${{ steps.get-repo-with-tags.outputs.matrix }}
     steps:
       - name: Get tags
-        id: get-tags
+        id: get-repo-with-tags
         run: |
           # Make a GET request to Docker Hub API for Percona repositories
           response=$(curl -s "https://hub.docker.com/v2/repositories/percona/?page_size=100")
@@ -31,16 +34,16 @@ jobs:
               done
           done
           jsonString=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${repo_with_tags[@]}")
-          echo "matrix="{"repos": $jsonString}"" >> $GITHUB_OUTPUT
-  scan_repos:
+          echo "::set-output name=matrix::$jsonString"
+  scan-repos:
     runs-on: ubuntu-latest
-    needs: get_tags
+    needs: get-tags
     strategy:
       matrix:
-        repos: ${{ fromJSON(needs.get_tags.outputs.matrix) }}
+        repos: ${{ fromJSON(needs.get-tags.outputs.matrix) }}
     steps:
       - name: Print repos
-        run: echo ${{ fromJSON(needs.get_tags.outputs.matrix) }}
+        run: echo ${{ fromJSON(needs.get-tags.outputs.matrix) }}
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
