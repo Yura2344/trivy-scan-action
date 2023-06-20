@@ -3,9 +3,46 @@ on: [workflow_dispatch]
 jobs:
   get_tags:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repos: ${{ steps.get-tags.outputs.matrix }}
     steps:
-      - name: get tags
+      - name: Get tags
+        id: get-tags
         run: |
-          tags_array=($(curl -L -s 'https://registry.hub.docker.com/v2/repositories/library/percona/tags'|jq '."results"[]["name"]'))
-          echo ${tags_array[*]}
-          sort -V <<<${tags_array[*]}
+          # Make a GET request to Docker Hub API for Percona repositories
+          response=$(curl -s "https://hub.docker.com/v2/repositories/percona/?page_size=100")
+
+          # Extract the repository names from the response using jq
+          repos=$(echo "$response" | jq -r '."results"[]["name"]')
+
+          repo_with_tags=()
+
+          # Iterate over each repository and retrieve the five latest tags
+          for repo in $repos; do
+              tags_array=()
+              link="https://hub.docker.com/v2/repositories/percona/${repo}/tags/?page_size=100"
+              while [ "$link" != "null" ]; do
+                  tags_response=$(curl -s $link)
+                  link=$(echo "$tags_response" | jq -r '.next')
+                  tags=$(echo "$tags_response" | jq -r '."results"[]["name"]')
+                  tags_array+=(${tags[@]})
+              done
+              tags_array=($(printf "%s\n" "${tags_array[@]}" | sort -V | tail -n 5))
+              for tag in ${tags_array[@]}; do
+                  repo_with_tags+=("percona/$repo/$tag")
+              done
+          done
+          jsonString=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${repo_with_tags[@]}")
+          echo "matrix=$jsonString" >> $GITHUB_OUTPUT
+  scan_repos:
+    runs-on: ubuntu-latest
+    needs: get_tags
+    strategy:
+      matrix:
+        repos: ${{ fromJSON(needs.get_tags.outputs.matrix) }}
+    steps:
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ matrix.repos }}'
