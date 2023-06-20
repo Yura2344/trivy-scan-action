@@ -47,7 +47,7 @@ jobs:
           wget https://github.com/aquasecurity/trivy/releases/download/v0.29.2/trivy_0.29.2_Linux-64bit.deb
           sudo dpkg -i trivy_0.29.2_Linux-64bit.deb
       - name: Run Trivy vulnerability scanner
-        run: trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o report.html ${{ matrix.repos }}
+        run: trivy image --format template --template "@/usr/local/share/trivy/templates/html.tpl" -o report.html percona/${{ matrix.repos }}
       - name: Upload report artifact
         uses: actions/upload-artifact@v3
         with:
