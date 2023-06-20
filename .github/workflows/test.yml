@@ -31,7 +31,7 @@ jobs:
               done
           done
           jsonString=$(jq --compact-output --null-input '$ARGS.positional' --args -- "${repo_with_tags[@]}")
-          echo "matrix=$jsonString" >> $GITHUB_OUTPUT
+          echo "matrix={$jsonString}" >> $GITHUB_OUTPUT
   scan_repos:
     runs-on: ubuntu-latest
     needs: get_tags
