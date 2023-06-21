@@ -25,7 +25,7 @@ jobs:
                   tags_response=$(curl -s $link)
                   link=$(echo "$tags_response" | jq -r '.next')
                   tags=$(echo "$tags_response" | jq -r '."results"[]["name"]')
-                  tags_array+=(${tags[@]})
+                  tags_array+=(${tags[@]/latest/})
                       done
               tags_array=($(printf "%s\n" "${tags_array[@]}" | sort -V | tail -n 5))
 
