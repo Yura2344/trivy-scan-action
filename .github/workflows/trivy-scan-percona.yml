@@ -31,6 +31,7 @@ jobs:
                   tags=$(echo "$tags_response" | jq -r '."results"[]["name"]')
                   tags_array+=(${tags[@]/latest/})
                       done
+              # Filter and sort tags
               tags_array=($(printf "%s\n" "${tags_array[@]}" | \
                 grep -E '^[0-9]+(\.[0-9]+)?(\.[0-9]+)?(\-[0-9]+)?(\.[0-9]+)?(\-[0-9]+)?' | sort -V | tail -n 5))
 
