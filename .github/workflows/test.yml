@@ -15,6 +15,7 @@ jobs:
           # Extract the repository names from the response using jq
           repos=$(echo "$response" | jq -r '."results"[]["name"]')
 
+          # JSON string with repositories and tags to include in the matrix
           repo_json="["
 
           # Iterate over each repository and retrieve the five latest tags
