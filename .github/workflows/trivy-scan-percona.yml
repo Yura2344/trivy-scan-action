@@ -31,12 +31,11 @@ jobs:
                   tags=$(echo "$tags_response" | jq -r '."results"[]["name"]')
                   tags_array+=(${tags[@]/latest/})
                       done
-              tags_array=($(printf "%s\n" "${tags_array[@]}" | sort -V | tail -n 5))
+              tags_array=($(printf "%s\n" "${tags_array[@]}" | \
+                grep -E '^[0-9]+(\.[0-9]+)?(\.[0-9]+)?(\-[0-9]+)?(\.[0-9]+)?(\-[0-9]+)?' | sort -V | tail -n 5))
 
               for tag in ${tags_array[@]}; do
-                  if [[ "$tag" =~ ^[0-9]+(\.[0-9]+)?(\.[0-9]+)?(\-[0-9]+)?(\.[0-9]+)?(\-[0-9]+)? ]]; then
-                      repo_json+="{\"repository\": \"$repo\", \"tag\": \"$tag\"},"
-                  fi
+                  repo_json+="{\"repository\": \"$repo\", \"tag\": \"$tag\"},"
               done
           done
           repo_json=${repo_json%?}
