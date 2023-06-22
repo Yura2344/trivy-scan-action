@@ -1,4 +1,4 @@
-name: test
+name: Trivy scan Percona repositories
 on: [workflow_dispatch]
 jobs:
   get-tags:
